@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Search from './pages/Search'
 import PharmacyNetwork from './pages/PharmacyNetwork'
 import Report from './pages/Report'
+import CriticalShortages from './pages/CriticalShortages'
 import LoginPage from './pages/LoginPage'
 import RequireAuth from './auth/RequireAuth'
 import { ROLES } from './auth/roles'
@@ -24,6 +25,7 @@ function App() {
         <Route path="home-preview" element={<Home />} />
         <Route path="search-medicines" element={<Search />} />
         <Route path="pharmacy-network" element={<PharmacyNetwork />} />
+        <Route path="critical-shortages" element={<CriticalShortages />} />
         <Route path="report-stock-issue" element={<Report />} />
 
         {/* Role-gated portals. Each RequireAuth only lets its own role through. */}

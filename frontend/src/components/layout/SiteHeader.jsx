@@ -6,7 +6,7 @@ const NAV_LINKS = [
   { label: 'Home', to: '/', end: true },
   { label: 'Search Medicines', to: '/home-preview' },
   { label: 'Pharmacy Network', to: '/pharmacy-network' },
-  { label: 'Critical Shortages', to: '#' },
+  { label: 'Critical Shortages', to: '/critical-shortages' },
 ]
 
 function navClass({ isActive }) {

@@ -119,3 +119,11 @@ export async function updateMyMedicineStatus(token, medicineId, status) {
   if (!res.ok) throw new Error(data.error || `Could not save the update (${res.status})`)
   return data
 }
+
+// GET ${VITE_API_URL}/api/critical-shortages — public
+// Fetches all medicines globally marked as low stock or out of stock.
+export async function getCriticalShortages() {
+  const res = await fetch(`${API_URL}/api/critical-shortages`)
+  if (!res.ok) throw new Error(`Could not load critical shortages (${res.status})`)
+  return res.json()
+}

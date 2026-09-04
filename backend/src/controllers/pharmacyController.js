@@ -44,6 +44,33 @@ exports.search = async (req, res) => {
   }
 };
 
+// GET /api/critical-shortages — public. Returns all medicines that are low stock or out of stock.
+exports.getCriticalShortages = async (req, res) => {
+  try {
+    const pharmacies = await Pharmacy.find({
+      "medicines.status": { $in: ["Low Stock", "Out of Stock"] }
+    }).lean();
+
+    const results = pharmacies.flatMap((pharmacy) =>
+      pharmacy.medicines
+        .filter((m) => ["Low Stock", "Out of Stock"].includes(m.status))
+        .map((m) => ({
+          id: `${pharmacy._id}-${m._id}`,
+          pharmacyId: pharmacy._id,
+          pharmacyName: pharmacy.name,
+          address: pharmacy.location,
+          medicineId: m._id,
+          medicineName: m.name,
+          status: STATUS_TO_SNAKE[m.status] || "unknown",
+        }))
+    );
+
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+};
+
 // GET /api/pharmacies — public, unfiltered list.
 exports.listPharmacies = async (req, res) => {
   try {

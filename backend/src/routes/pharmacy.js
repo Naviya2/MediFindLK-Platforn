@@ -5,6 +5,7 @@ const { protect, authorize } = require("../middleware/auth");
 
 // Public
 router.get("/search", pharmacyController.search);
+router.get("/critical-shortages", pharmacyController.getCriticalShortages);
 router.get("/pharmacies", pharmacyController.listPharmacies);
 
 // Protected pharmacist routes — registered before the "/pharmacy/:pharmacyId/..."
