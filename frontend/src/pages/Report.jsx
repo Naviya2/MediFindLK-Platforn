@@ -48,7 +48,8 @@ function Report() {
   }
 
   return (
-    <section className="page">
+    <div className="app">
+      <section className="page">
       <h1>Report stock</h1>
       <p className="page__sub">
         Pharmacy staff can update whether a medicine is currently available.
@@ -116,7 +117,8 @@ function Report() {
           {success}
         </p>
       )}
-    </section>
+      </section>
+    </div>
   )
 }
 
