@@ -4,7 +4,8 @@ require("dotenv").config();
 require("dns").setServers(["8.8.8.8", "1.1.1.1"]);
 
 const mongoose = require("mongoose");
-const Pharmacy = require("./models/Pharmacy");
+const Pharmacy = require("./src/models/Pharmacy");
+const Medicine = require("./src/models/Medicine");
 
 const pharmacies = [
   {
@@ -12,12 +13,12 @@ const pharmacies = [
     location: "Colombo 03",
     medicines: [
       { name: "Panadol", status: "In Stock" },
-      { name: "Amoxicillin", status: "Low" },
+      { name: "Amoxicillin", status: "Low Stock" },
       { name: "Piriton", status: "In Stock" },
       { name: "Metformin", status: "Out of Stock" },
       { name: "Losartan", status: "In Stock" },
       { name: "Vitamin C", status: "In Stock" },
-      { name: "Paracetamol Syrup", status: "Low" },
+      { name: "Paracetamol Syrup", status: "Low Stock" },
       { name: "Omeprazole", status: "In Stock" },
     ],
   },
@@ -29,10 +30,10 @@ const pharmacies = [
       { name: "Amoxicillin", status: "In Stock" },
       { name: "Piriton", status: "Out of Stock" },
       { name: "Metformin", status: "In Stock" },
-      { name: "Losartan", status: "Low" },
+      { name: "Losartan", status: "Low Stock" },
       { name: "Vitamin C", status: "In Stock" },
       { name: "Paracetamol Syrup", status: "In Stock" },
-      { name: "Omeprazole", status: "Low" },
+      { name: "Omeprazole", status: "Low Stock" },
       { name: "Cetirizine", status: "In Stock" },
     ],
   },
@@ -40,7 +41,7 @@ const pharmacies = [
     name: "City Care Pharmacy - Galle",
     location: "Galle",
     medicines: [
-      { name: "Panadol", status: "Low" },
+      { name: "Panadol", status: "Low Stock" },
       { name: "Amoxicillin", status: "Out of Stock" },
       { name: "Piriton", status: "In Stock" },
       { name: "Metformin", status: "In Stock" },
@@ -48,7 +49,7 @@ const pharmacies = [
       { name: "Vitamin C", status: "Out of Stock" },
       { name: "Paracetamol Syrup", status: "In Stock" },
       { name: "Omeprazole", status: "In Stock" },
-      { name: "Ibuprofen", status: "Low" },
+      { name: "Ibuprofen", status: "Low Stock" },
       { name: "Salbutamol Inhaler", status: "In Stock" },
     ],
   },
@@ -58,11 +59,11 @@ const pharmacies = [
     medicines: [
       { name: "Panadol", status: "In Stock" },
       { name: "Amoxicillin", status: "In Stock" },
-      { name: "Piriton", status: "Low" },
+      { name: "Piriton", status: "Low Stock" },
       { name: "Metformin", status: "Out of Stock" },
       { name: "Losartan", status: "Out of Stock" },
       { name: "Vitamin C", status: "In Stock" },
-      { name: "Paracetamol Syrup", status: "Low" },
+      { name: "Paracetamol Syrup", status: "Low Stock" },
       { name: "Omeprazole", status: "In Stock" },
     ],
   },
@@ -71,11 +72,11 @@ const pharmacies = [
     location: "Jaffna",
     medicines: [
       { name: "Panadol", status: "In Stock" },
-      { name: "Amoxicillin", status: "Low" },
+      { name: "Amoxicillin", status: "Low Stock" },
       { name: "Piriton", status: "In Stock" },
       { name: "Metformin", status: "In Stock" },
       { name: "Losartan", status: "In Stock" },
-      { name: "Vitamin C", status: "Low" },
+      { name: "Vitamin C", status: "Low Stock" },
       { name: "Paracetamol Syrup", status: "Out of Stock" },
       { name: "Omeprazole", status: "In Stock" },
       { name: "Atorvastatin", status: "In Stock" },
@@ -89,10 +90,28 @@ async function seed() {
     console.log("✅ Connected to MongoDB");
 
     await Pharmacy.deleteMany({});
-    console.log("🧹 Cleared Pharmacy collection");
+    await Medicine.deleteMany({});
+    console.log("🧹 Cleared Pharmacy and Medicine collections");
 
-    await Pharmacy.insertMany(pharmacies);
-    console.log(`🌱 Inserted ${pharmacies.length} pharmacies`);
+    for (const pData of pharmacies) {
+      // Create Pharmacy
+      const pharmacy = await Pharmacy.create({
+        name: pData.name,
+        location: pData.location,
+      });
+
+      // Prepare Medicines for this Pharmacy
+      const medicinesToInsert = pData.medicines.map((m) => ({
+        name: m.name,
+        status: m.status,
+        pharmacy: pharmacy._id,
+      }));
+
+      // Insert Medicines
+      await Medicine.insertMany(medicinesToInsert);
+    }
+
+    console.log(`🌱 Inserted ${pharmacies.length} pharmacies and their medicines`);
 
     await mongoose.disconnect();
     console.log("✅ Seed complete");
