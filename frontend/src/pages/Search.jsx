@@ -39,7 +39,8 @@ function Search() {
   const showNoResults = searched && !loading && !error && results.length === 0
 
   return (
-    <section className="page">
+    <div className="app">
+      <section className="page">
       <h1>Find a medicine</h1>
       <p className="page__sub">
         Search for a medicine to see which pharmacies have it in stock.
@@ -82,7 +83,8 @@ function Search() {
           ))}
         </div>
       )}
-    </section>
+      </section>
+    </div>
   )
 }
 

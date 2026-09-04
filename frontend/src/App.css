@@ -79,8 +79,8 @@
   color: var(--text-h);
 }
 
-input,
-select {
+.app input,
+.app select {
   font: inherit;
   font-size: 15px;
   padding: 8px 10px;
@@ -90,14 +90,14 @@ select {
   color: var(--text-h);
 }
 
-button[type='submit'],
+.app button[type='submit'],
 .app__nav button {
   transition:
     border-color 0.2s,
     background 0.2s;
 }
 
-button[type='submit'] {
+.app button[type='submit'] {
   font: inherit;
   font-size: 15px;
   align-self: flex-start;
@@ -109,7 +109,7 @@ button[type='submit'] {
   cursor: pointer;
 }
 
-button[type='submit']:disabled {
+.app button[type='submit']:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
