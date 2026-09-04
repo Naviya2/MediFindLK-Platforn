@@ -52,15 +52,15 @@ function DualPurposeCTA() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-space-md">
-          <a
+          <Link
             className="px-space-lg h-12 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary-container transition-all shadow-md"
-            href="#"
+            to="/login"
           >
             <MaterialSymbol name="badge" className="text-[20px]" />
             <span>Pharmacist Portal Login</span>
-          </a>
+          </Link>
           <Link
-            to="/report-stock-issue"
+            to="/login?tab=register"
             className="px-space-md h-12 rounded-xl bg-surface-container text-on-surface font-label-lg text-label-lg flex items-center gap-2 hover:bg-surface-container-high transition-colors"
           >
             <span>Register New Branch</span>
