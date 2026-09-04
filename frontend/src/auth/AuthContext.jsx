@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AuthContext } from './useAuth'
-import { verifyCredentials } from './demoAccounts'
-import { createAccount, verifyStoredCredentials } from './accountStore'
+import { loginRequest, registerRequest } from '../api/authApi'
 
 /**
- * Client-side auth state for MediFind LK.
- *
- * There is no auth backend yet, so `login()` checks the submitted credentials
- * against the demo accounts in `demoAccounts.js` and persists a session to
- * localStorage on success. When the real `/api/auth/*` endpoints land, replace
- * the `verifyCredentials` call with a fetch and keep the `{ ok, error }` shape.
+ * JWT-backed auth state for MediFind LK. `login()` / `register()` call the
+ * `/api/auth/*` endpoints and persist the returned `{ token, role, identifier,
+ * name }` session to localStorage.
  */
 
 const STORAGE_KEY = 'medifind.auth'
@@ -19,18 +15,10 @@ function readStoredUser() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    return parsed && parsed.role ? parsed : null
+    return parsed && parsed.role && parsed.token ? parsed : null
   } catch {
     return null
   }
-}
-
-/** Turn an email / SLPC id into a friendly display name for the portal header. */
-function deriveName(identifier) {
-  const value = String(identifier || '').trim()
-  if (!value) return 'Signed-in user'
-  const local = value.includes('@') ? value.split('@')[0] : value
-  return local.replace(/[._-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 export function AuthProvider({ children }) {
@@ -55,18 +43,15 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('storage', sync)
   }, [])
 
-  const login = useCallback(({ role, identifier, password }) => {
-    // Demo accounts first, then anything the visitor has registered locally.
-    const account =
-      verifyCredentials({ role, identifier, password }) ||
-      verifyStoredCredentials({ role, identifier, password })
-    if (!account) {
-      return { ok: false, error: 'Incorrect email / ID or password for the selected role.' }
-    }
+  const login = useCallback(async ({ role, identifier, password }) => {
+    const result = await loginRequest({ role, identifier, password })
+    if (!result.ok) return result
+
     setUser({
-      role: account.role,
-      identifier: account.identifier,
-      name: account.name || deriveName(account.identifier),
+      token: result.token,
+      role: result.user.role,
+      identifier: result.user.email,
+      name: result.user.name,
     })
     return { ok: true }
   }, [])
@@ -76,15 +61,15 @@ export function AuthProvider({ children }) {
    * `fields` = { role, name, identifier, password, phone?, pharmacyName?, slpcId? }
    * Returns `{ ok: true }` or `{ ok: false, error }`.
    */
-  const register = useCallback((fields) => {
-    const result = createAccount(fields)
+  const register = useCallback(async (fields) => {
+    const result = await registerRequest(fields)
     if (!result.ok) return result
 
-    const { account } = result
     setUser({
-      role: account.role,
-      identifier: account.identifier,
-      name: account.name || deriveName(account.identifier),
+      token: result.token,
+      role: result.user.role,
+      identifier: result.user.email,
+      name: result.user.name,
     })
     return { ok: true }
   }, [])

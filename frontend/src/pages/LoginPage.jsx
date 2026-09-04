@@ -27,18 +27,16 @@ function LoginPage() {
   const initialMode =
     new URLSearchParams(location.search).get('tab') === 'register' ? 'register' : 'signin'
 
-  function handleSignIn({ role, identifier, password }) {
-    const result = login({ role, identifier, password })
+  async function handleSignIn({ role, identifier, password }) {
+    const result = await login({ role, identifier, password })
     if (result.ok) {
       navigate(redirectTo || roleHome(role), { replace: true })
     }
     return result
   }
 
-  function handleRegister({ role, ...fields }) {
-    // TODO: POST ${VITE_API_URL}/api/auth/register once the backend exists.
-    // For now the account is created locally and the user is signed straight in.
-    const result = register({ role, ...fields })
+  async function handleRegister({ role, ...fields }) {
+    const result = await register({ role, ...fields })
     if (result.ok) {
       navigate(roleHome(role), { replace: true })
     }

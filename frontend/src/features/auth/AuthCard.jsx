@@ -3,7 +3,6 @@ import MaterialSymbol from '../../components/layout/MaterialSymbol'
 import RoleSelector from './RoleSelector'
 import SignInForm from './SignInForm'
 import CreateAccountForm from './CreateAccountForm'
-import DemoCredentialsHint from './DemoCredentialsHint'
 import { DEFAULT_ROLE_ID, getRole } from './authContent'
 
 /**
@@ -84,7 +83,6 @@ function AuthCard({ onSignIn, onRegister, initialMode = 'signin' }) {
         {activeMode === 'signin' ? (
           <>
             <SignInForm role={role} onSubmit={(data) => onSignIn?.({ role: role.id, ...data })} />
-            <DemoCredentialsHint roleId={role.id} />
             {role.canRegister && (
               <p className="font-body-sm text-body-sm text-on-surface-variant text-center">
                 New here?{' '}

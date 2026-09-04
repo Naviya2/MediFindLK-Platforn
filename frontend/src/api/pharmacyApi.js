@@ -1,6 +1,6 @@
 import { getDummyResults } from '../data/dummyData'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 // Flipped to true the first time a request fails to reach the backend, so the
 // rest of the session transparently uses the dummy data fallback.
