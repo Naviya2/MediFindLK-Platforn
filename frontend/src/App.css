@@ -1,0 +1,234 @@
+.app {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+  text-align: left;
+}
+
+.app__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.app__logo {
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--text-h);
+}
+
+.app__nav {
+  display: flex;
+  gap: 8px;
+}
+
+.app__nav button {
+  font: inherit;
+  font-size: 15px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.app__nav button.is-active {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.page h1 {
+  font-size: 30px;
+  margin: 0 0 8px;
+}
+
+.page__sub {
+  margin-bottom: 24px;
+}
+
+/* Forms */
+.search-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.search-form input {
+  flex: 1;
+}
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.report-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+input,
+select {
+  font: inherit;
+  font-size: 15px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+button[type='submit'],
+.app__nav button {
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+button[type='submit'] {
+  font: inherit;
+  font-size: 15px;
+  align-self: flex-start;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+button[type='submit']:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Feedback states */
+.loading,
+.empty-state,
+.notice {
+  padding: 12px 0;
+}
+
+.notice {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.empty-state {
+  color: var(--text-h);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid #f0b4b4;
+  background: rgba(220, 80, 80, 0.08);
+  color: #b23b3b;
+  margin: 12px 0;
+}
+
+.success-message {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid #a9d8b5;
+  background: rgba(60, 170, 90, 0.1);
+  color: #2f7d43;
+  margin: 12px 0;
+}
+
+.link-button {
+  font: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Results */
+.result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.result-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.result-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.result-card__head h3 {
+  margin: 0;
+  font-size: 17px;
+  color: var(--text-h);
+}
+
+.result-card__medicine {
+  margin: 4px 0 8px;
+  color: var(--text-h);
+}
+
+.result-card__meta {
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.result-card__foot {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.status-badge {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status-badge--in_stock {
+  background: rgba(60, 170, 90, 0.15);
+  color: #2f7d43;
+}
+
+.status-badge--low_stock {
+  background: rgba(230, 160, 30, 0.15);
+  color: #a9711b;
+}
+
+.status-badge--out_of_stock {
+  background: rgba(220, 80, 80, 0.15);
+  color: #b23b3b;
+}
+
+.status-badge--unknown {
+  background: var(--code-bg);
+  color: var(--text);
+}
