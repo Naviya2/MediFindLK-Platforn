@@ -7,13 +7,17 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const pharmacyRoutes = require("./routes/pharmacy");
+const pharmacyRoutes = require("./src/routes/pharmacy");
+const adminRoutes = require("./src/routes/adminRoutes");
+const authRoutes = require("./src/routes/authRoutes");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api", pharmacyRoutes);
 
 const PORT = process.env.PORT || 5000;
