@@ -11,6 +11,12 @@ const User = require("./src/models/User");
 // Shared password for every seeded demo pharmacist account.
 const DEMO_PASSWORD = "Pharma@123";
 
+const DEMO_ADMIN = {
+  name: "MediFind LK Admin",
+  email: "admin.demo@medifind.lk",
+  password: "Admin@123",
+};
+
 const pharmacies = [
   {
     name: "Sunshine Pharmacy - Colombo 03",
@@ -104,10 +110,18 @@ async function seed() {
     console.log("✅ Connected to MongoDB");
 
     await Pharmacy.deleteMany({});
-    await User.deleteMany({ role: "pharmacist" });
-    console.log("🧹 Cleared Pharmacy collection and demo pharmacist accounts");
+    await User.deleteMany({ role: { $in: ["pharmacist", "admin"] } });
+    console.log("🧹 Cleared Pharmacy collection and demo pharmacist/admin accounts");
 
     const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
+    const adminPasswordHash = await bcrypt.hash(DEMO_ADMIN.password, 10);
+
+    await User.create({
+      name: DEMO_ADMIN.name,
+      email: DEMO_ADMIN.email,
+      passwordHash: adminPasswordHash,
+      role: "admin",
+    });
 
     for (const p of pharmacies) {
       const user = await User.create({
@@ -135,6 +149,9 @@ async function seed() {
     console.log("Demo pharmacist logins (all share the same password):");
     console.log(`  password: ${DEMO_PASSWORD}`);
     pharmacies.forEach((p) => console.log(`  ${p.pharmacistEmail}  ->  ${p.name}`));
+    console.log("");
+    console.log("Demo admin login:");
+    console.log(`  ${DEMO_ADMIN.email} / ${DEMO_ADMIN.password}`);
 
     await mongoose.disconnect();
     console.log("");

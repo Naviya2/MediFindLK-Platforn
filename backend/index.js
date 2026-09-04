@@ -9,6 +9,8 @@ const mongoose = require("mongoose");
 
 const pharmacyRoutes = require("./src/routes/pharmacy");
 const authRoutes = require("./src/routes/auth");
+const adminRoutes = require("./src/routes/admin");
+const aiRoutes = require("./src/routes/ai");
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api", pharmacyRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/ai", aiRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -10,7 +10,7 @@ import RequireAuth from './auth/RequireAuth'
 import { ROLES } from './auth/roles'
 import CitizenPortal from './pages/portal/CitizenPortal'
 import PharmacistDashboard from './pages/PharmacistDashboard'
-import AdminPortal from './pages/portal/AdminPortal'
+import AdminDashboard from './pages/AdminDashboard'
 import './App.css'
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
           <Route path="portal/pharmacist" element={<PharmacistDashboard />} />
         </Route>
         <Route element={<RequireAuth roles={[ROLES.ADMIN]} />}>
-          <Route path="portal/admin" element={<AdminPortal />} />
+          <Route path="portal/admin" element={<AdminDashboard />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -103,7 +103,7 @@
   border-color: var(--accent-border);
 }
 
-/* AI suggestion placeholder */
+/* AI suggestion panel */
 .ai-suggestion-panel {
   margin-top: 12px;
   padding: 14px 16px;
@@ -123,6 +123,16 @@
 
 .ai-suggestion-panel p {
   margin: 0;
+}
+
+.ai-suggestion-panel p + p {
+  margin-top: 6px;
+}
+
+.ai-suggestion-panel__disclaimer {
+  font-size: 12px;
+  color: var(--text);
+  font-style: italic;
 }
 
 .report-form {
