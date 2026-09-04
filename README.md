@@ -25,10 +25,10 @@ Citizens often face significant difficulties and delays in locating specific med
 *   Claude  
 
 ## Team Member Details and Contributions
-*   **IT24102295** - Sandaru P.H.B (Role / Contributions: ...)
-*   **IT24103826** - Ranaweera K.R (Role / Contributions: ...)
-*   **IT24103921** - Samarawickrama N.A.N.D (Role / Contributions: Member 3 - Pharmacist Module & Stock Management)
-*   **IT24102953** - Yasara R.P.M (Role / Contributions: ...)
+*   **IT24102295** - Sandaru P.H.B (Contributions: Authentication & Role based Access)
+*   **IT24103826** - Ranaweera K.R (Contributions: User Interface and Medicine Search)
+*   **IT24103921** - Samarawickrama N.A.N.D (Contributions: Pharmacist Module & Stock Management)
+*   **IT24102953** - Yasara R.P.M (Contributions: Admin Module & AI Integration and Development)
 
 ## Installation and Execution Instructions
 
