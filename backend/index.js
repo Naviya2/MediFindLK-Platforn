@@ -7,7 +7,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const pharmacyRoutes = require("./routes/pharmacy");
+const pharmacyRoutes = require("./src/routes/pharmacy");
 
 const app = express();
 
