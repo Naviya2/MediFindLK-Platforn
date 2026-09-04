@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-
 const Pharmacy = require("../models/Pharmacy");
+const Medicine = require("../models/Medicine");
 
 // GET /api/search?medicine=xxx
 // Case-insensitive partial match on medicine name.
@@ -16,55 +16,23 @@ router.get("/search", async (req, res) => {
 
     const regex = new RegExp(medicine.trim(), "i");
 
-    const pharmacies = await Pharmacy.find({ "medicines.name": regex }).lean();
+    // Find all medicines matching query, and populate the pharmacy reference
+    const medicines = await Medicine.find({ name: regex }).populate("pharmacy").lean();
 
-    const results = pharmacies.map((p) => {
-      const matches = p.medicines.filter((m) => regex.test(m.name));
-      return matches.map((m) => ({
-        pharmacyId: p._id,
-        name: p.name,
-        location: p.location,
+    const results = medicines.map((m) => {
+      if (!m.pharmacy) return null;
+      
+      return {
+        pharmacyId: m.pharmacy._id,
+        name: m.pharmacy.name,
+        location: m.pharmacy.location,
         medicineId: m._id,
         medicine: m.name,
         status: m.status,
-      }));
-    });
+      };
+    }).filter(Boolean); // Remove nulls
 
-    // Flatten: one entry per matching medicine.
-    res.json(results.flat());
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// PUT /api/pharmacy/:pharmacyId/medicine/:medicineId
-// Updates the status of one medicine inside one pharmacy.
-router.put("/pharmacy/:pharmacyId/medicine/:medicineId", async (req, res) => {
-  try {
-    const { pharmacyId, medicineId } = req.params;
-    const { status } = req.body;
-
-    const allowed = ["In Stock", "Low", "Out of Stock"];
-    if (!allowed.includes(status)) {
-      return res
-        .status(400)
-        .json({ error: `status must be one of: ${allowed.join(", ")}` });
-    }
-
-    const pharmacy = await Pharmacy.findById(pharmacyId);
-    if (!pharmacy) {
-      return res.status(404).json({ error: "Pharmacy not found" });
-    }
-
-    const medicine = pharmacy.medicines.id(medicineId);
-    if (!medicine) {
-      return res.status(404).json({ error: "Medicine not found" });
-    }
-
-    medicine.status = status;
-    await pharmacy.save();
-
-    res.json(pharmacy);
+    res.json(results);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
