@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const Pharmacy = require("../models/Pharmacy");
 const { signToken } = require("../utils/jwt");
 
 const ROLES = ["citizen", "pharmacist", "admin"];
@@ -13,6 +14,7 @@ function toPublicUser(user) {
     phone: user.phone,
     pharmacyName: user.pharmacyName,
     slpcId: user.slpcId,
+    pharmacyId: user.pharmacy ? user.pharmacy.toString() : undefined,
   };
 }
 
@@ -49,6 +51,16 @@ exports.register = async (req, res) => {
       pharmacyName: role === "pharmacist" ? pharmacyName : undefined,
       slpcId: role === "pharmacist" ? slpcId : undefined,
     });
+
+    if (role === "pharmacist") {
+      const pharmacy = await Pharmacy.create({
+        name: pharmacyName,
+        owner: user._id,
+        medicines: [],
+      });
+      user.pharmacy = pharmacy._id;
+      await user.save();
+    }
 
     const token = signToken(user);
     res.status(201).json({ token, user: toPublicUser(user) });

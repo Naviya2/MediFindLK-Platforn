@@ -4,8 +4,8 @@ import HeaderAuth from './HeaderAuth'
 
 const NAV_LINKS = [
   { label: 'Home', to: '/', end: true },
-  { label: 'Search Medicines', to: '/search-medicines' },
-  { label: 'Pharmacy Network', to: '#' },
+  { label: 'Search Medicines', to: '/home-preview' },
+  { label: 'Pharmacy Network', to: '/pharmacy-network' },
   { label: 'Critical Shortages', to: '#' },
 ]
 

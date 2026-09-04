@@ -68,3 +68,54 @@ export async function updateStock(pharmacyId, medicineId, status) {
 function isNetworkError(err) {
   return err instanceof TypeError || err.name === 'AbortError'
 }
+
+// GET ${VITE_API_URL}/api/pharmacies — every pharmacy with its medicines.
+// Powers the public "Pharmacy Network" page.
+export async function listPharmacies() {
+  const res = await fetch(`${API_URL}/api/pharmacies`)
+  if (!res.ok) throw new Error(`Could not load pharmacies (${res.status})`)
+  return res.json()
+}
+
+// GET ${VITE_API_URL}/api/pharmacy/mine — the signed-in pharmacist's own
+// pharmacy + medicines. Requires a JWT with role "pharmacist".
+export async function getMyPharmacy(token) {
+  const res = await fetch(`${API_URL}/api/pharmacy/mine`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || `Could not load your pharmacy (${res.status})`)
+  return data
+}
+
+// POST ${VITE_API_URL}/api/pharmacy/mine/medicine
+// Adds a new medicine to the signed-in pharmacist's own pharmacy.
+export async function addMyMedicine(token, name, status) {
+  const res = await fetch(`${API_URL}/api/pharmacy/mine/medicine`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name, status }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || `Could not add the medicine (${res.status})`)
+  return data
+}
+
+// PUT ${VITE_API_URL}/api/pharmacy/mine/medicine/${medicineId}
+// Updates one medicine's status on the signed-in pharmacist's own pharmacy.
+export async function updateMyMedicineStatus(token, medicineId, status) {
+  const res = await fetch(`${API_URL}/api/pharmacy/mine/medicine/${medicineId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || `Could not save the update (${res.status})`)
+  return data
+}

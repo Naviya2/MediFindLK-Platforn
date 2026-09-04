@@ -1,51 +1,29 @@
 const express = require("express");
 const router = express.Router();
-const Pharmacy = require("../models/Pharmacy");
-const Medicine = require("../models/Medicine");
+const pharmacyController = require("../controllers/pharmacyController");
+const { protect, authorize } = require("../middleware/auth");
 
-// GET /api/search?medicine=xxx
-// Case-insensitive partial match on medicine name.
-// Returns pharmacies with ONLY the matching medicine(s) included.
-router.get("/search", async (req, res) => {
-  try {
-    const { medicine } = req.query;
+// Public
+router.get("/search", pharmacyController.search);
+router.get("/pharmacies", pharmacyController.listPharmacies);
 
-    if (!medicine || !medicine.trim()) {
-      return res.status(400).json({ error: "medicine query param is required" });
-    }
+// Protected pharmacist routes — registered before the "/pharmacy/:pharmacyId/..."
+// pattern below so "mine" is never captured as a :pharmacyId value.
+router.get("/pharmacy/mine", protect, authorize("pharmacist"), pharmacyController.getMine);
+router.post(
+  "/pharmacy/mine/medicine",
+  protect,
+  authorize("pharmacist"),
+  pharmacyController.addMineMedicine,
+);
+router.put(
+  "/pharmacy/mine/medicine/:medicineId",
+  protect,
+  authorize("pharmacist"),
+  pharmacyController.updateMineMedicine,
+);
 
-    const regex = new RegExp(medicine.trim(), "i");
-
-    // Find all medicines matching query, and populate the pharmacy reference
-    const medicines = await Medicine.find({ name: regex }).populate("pharmacy").lean();
-
-    const results = medicines.map((m) => {
-      if (!m.pharmacy) return null;
-      
-      return {
-        pharmacyId: m.pharmacy._id,
-        name: m.pharmacy.name,
-        location: m.pharmacy.location,
-        medicineId: m._id,
-        medicine: m.name,
-        status: m.status,
-      };
-    }).filter(Boolean); // Remove nulls
-
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// GET /api/pharmacies — all pharmacies, unfiltered.
-router.get("/pharmacies", async (req, res) => {
-  try {
-    const pharmacies = await Pharmacy.find().lean();
-    res.json(pharmacies);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// Public "report a stock issue" endpoint (citizen-facing, no auth).
+router.put("/pharmacy/:pharmacyId/medicine/:medicineId", pharmacyController.reportStock);
 
 module.exports = router;

@@ -1,13 +1,15 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import LandingPage from './pages/LandingPage'
+import Home from './pages/Home'
 import Search from './pages/Search'
+import PharmacyNetwork from './pages/PharmacyNetwork'
 import Report from './pages/Report'
 import LoginPage from './pages/LoginPage'
 import RequireAuth from './auth/RequireAuth'
 import { ROLES } from './auth/roles'
 import CitizenPortal from './pages/portal/CitizenPortal'
-import PharmacistPortal from './pages/portal/PharmacistPortal'
+import PharmacistDashboard from './pages/PharmacistDashboard'
 import AdminPortal from './pages/portal/AdminPortal'
 import './App.css'
 
@@ -19,7 +21,9 @@ function App() {
 
       <Route element={<Layout />}>
         <Route index element={<LandingPage />} />
+        <Route path="home-preview" element={<Home />} />
         <Route path="search-medicines" element={<Search />} />
+        <Route path="pharmacy-network" element={<PharmacyNetwork />} />
         <Route path="report-stock-issue" element={<Report />} />
 
         {/* Role-gated portals. Each RequireAuth only lets its own role through. */}
@@ -27,7 +31,7 @@ function App() {
           <Route path="portal/citizen" element={<CitizenPortal />} />
         </Route>
         <Route element={<RequireAuth roles={[ROLES.PHARMACIST]} />}>
-          <Route path="portal/pharmacist" element={<PharmacistPortal />} />
+          <Route path="portal/pharmacist" element={<PharmacistDashboard />} />
         </Route>
         <Route element={<RequireAuth roles={[ROLES.ADMIN]} />}>
           <Route path="portal/admin" element={<AdminPortal />} />

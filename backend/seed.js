@@ -3,13 +3,20 @@ require("dotenv").config();
 // Some ISP/router DNS servers don't answer the SRV lookups that mongodb+srv:// needs.
 require("dns").setServers(["8.8.8.8", "1.1.1.1"]);
 
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const Pharmacy = require("./src/models/Pharmacy");
+const User = require("./src/models/User");
+
+// Shared password for every seeded demo pharmacist account.
+const DEMO_PASSWORD = "Pharma@123";
 
 const pharmacies = [
   {
     name: "Sunshine Pharmacy - Colombo 03",
     location: "Colombo 03",
+    pharmacistEmail: "pharmacist1@medifind.lk",
+    pharmacistName: "Nadeesha Fernando",
     medicines: [
       { name: "Panadol", status: "In Stock" },
       { name: "Amoxicillin", status: "Low Stock" },
@@ -24,6 +31,8 @@ const pharmacies = [
   {
     name: "Green Cross Pharmacy - Kandy",
     location: "Kandy",
+    pharmacistEmail: "pharmacist2@medifind.lk",
+    pharmacistName: "Kasun Jayasuriya",
     medicines: [
       { name: "Panadol", status: "In Stock" },
       { name: "Amoxicillin", status: "In Stock" },
@@ -39,6 +48,8 @@ const pharmacies = [
   {
     name: "City Care Pharmacy - Galle",
     location: "Galle",
+    pharmacistEmail: "pharmacist3@medifind.lk",
+    pharmacistName: "Ishara Perera",
     medicines: [
       { name: "Panadol", status: "Low Stock" },
       { name: "Amoxicillin", status: "Out of Stock" },
@@ -55,6 +66,8 @@ const pharmacies = [
   {
     name: "Nawaloka Pharmacy - Negombo",
     location: "Negombo",
+    pharmacistEmail: "pharmacist4@medifind.lk",
+    pharmacistName: "Chamara Silva",
     medicines: [
       { name: "Panadol", status: "In Stock" },
       { name: "Amoxicillin", status: "In Stock" },
@@ -69,6 +82,8 @@ const pharmacies = [
   {
     name: "Family Health Pharmacy - Jaffna",
     location: "Jaffna",
+    pharmacistEmail: "pharmacist5@medifind.lk",
+    pharmacistName: "Priya Kumaraswamy",
     medicines: [
       { name: "Panadol", status: "In Stock" },
       { name: "Amoxicillin", status: "Low Stock" },
@@ -89,30 +104,40 @@ async function seed() {
     console.log("✅ Connected to MongoDB");
 
     await Pharmacy.deleteMany({});
-    await Medicine.deleteMany({});
-    console.log("🧹 Cleared Pharmacy and Medicine collections");
+    await User.deleteMany({ role: "pharmacist" });
+    console.log("🧹 Cleared Pharmacy collection and demo pharmacist accounts");
 
-    for (const pData of pharmacies) {
-      // Create Pharmacy
-      const pharmacy = await Pharmacy.create({
-        name: pData.name,
-        location: pData.location,
+    const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
+
+    for (const p of pharmacies) {
+      const user = await User.create({
+        name: p.pharmacistName,
+        email: p.pharmacistEmail,
+        passwordHash,
+        role: "pharmacist",
+        pharmacyName: p.name,
+        slpcId: `SLPC-DEMO-${p.pharmacistEmail.split("@")[0]}`,
       });
 
-      // Prepare Medicines for this Pharmacy
-      const medicinesToInsert = pData.medicines.map((m) => ({
-        name: m.name,
-        status: m.status,
-        pharmacy: pharmacy._id,
-      }));
+      const pharmacy = await Pharmacy.create({
+        name: p.name,
+        location: p.location,
+        owner: user._id,
+        medicines: p.medicines,
+      });
 
-      // Insert Medicines
-      await Medicine.insertMany(medicinesToInsert);
+      user.pharmacy = pharmacy._id;
+      await user.save();
     }
 
-    console.log(`🌱 Inserted ${pharmacies.length} pharmacies and their medicines`);
+    console.log(`🌱 Seeded ${pharmacies.length} pharmacies with linked pharmacist accounts`);
+    console.log("");
+    console.log("Demo pharmacist logins (all share the same password):");
+    console.log(`  password: ${DEMO_PASSWORD}`);
+    pharmacies.forEach((p) => console.log(`  ${p.pharmacistEmail}  ->  ${p.name}`));
 
     await mongoose.disconnect();
+    console.log("");
     console.log("✅ Seed complete");
     process.exit(0);
   } catch (err) {
